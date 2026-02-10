@@ -1,8 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { WeddingData, Task, Priority, TaskStatus } from "../types";
+import { WeddingData, Task, Priority, TaskStatus } from "../types.ts";
 
-// Always use process.env.API_KEY directly for initialization without fallback
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateInitialChecklist = async (wedding: WeddingData): Promise<Partial<Task>[]> => {
@@ -33,7 +32,7 @@ export const generateInitialChecklist = async (wedding: WeddingData): Promise<Pa
   });
 
   try {
-    return JSON.parse(response.text);
+    return JSON.parse(response.text || "[]");
   } catch (e) {
     console.error("Failed to parse AI response", e);
     return [];

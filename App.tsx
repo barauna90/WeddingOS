@@ -1,17 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { Layout } from './components/Layout';
-import { Dashboard } from './components/Dashboard';
-import { Checklist } from './components/Checklist';
-import { Financial } from './components/Financial';
-import { Guests } from './components/Guests';
-import { Padrinhos } from './components/Padrinhos';
-import { Gifts } from './components/Gifts';
-import { SettingsPage } from './components/SettingsPage';
-import { Auth } from './components/Auth';
-import { Onboarding } from './components/Onboarding';
-import { WeddingData, Task, Guest, Godparent, Gift, Transaction, TaskStatus, RSVPStatus, Priority, GiftStatus } from './types';
-import { supabase } from './services/supabase';
+import { Layout } from './components/Layout.tsx';
+import { Dashboard } from './components/Dashboard.tsx';
+import { Checklist } from './components/Checklist.tsx';
+import { Financial } from './components/Financial.tsx';
+import { Guests } from './components/Guests.tsx';
+import { Padrinhos } from './components/Padrinhos.tsx';
+import { Gifts } from './components/Gifts.tsx';
+import { SettingsPage } from './components/SettingsPage.tsx';
+import { Auth } from './components/Auth.tsx';
+import { Onboarding } from './components/Onboarding.tsx';
+import { WeddingData, Task, Guest, Godparent, Gift, Transaction, TaskStatus, RSVPStatus, Priority, GiftStatus } from './types.ts';
+import { supabase } from './services/supabase.ts';
 
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
@@ -113,48 +113,39 @@ const App: React.FC = () => {
     }} />;
   }
 
-  // --- Operações de Tarefas ---
   const addTask = async (task: Task) => {
     setTasks(prev => [task, ...prev]);
-    const { error } = await supabase.from('tasks').insert([{ ...task, user_id: session.user.id }]);
-    if (error) console.error("Erro ao salvar tarefa:", error);
+    await supabase.from('tasks').insert([{ ...task, user_id: session.user.id }]);
   };
 
   const updateTask = async (id: string, updates: Partial<Task>) => {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
-    const { error } = await supabase.from('tasks').update(updates).eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao atualizar tarefa:", error);
+    await supabase.from('tasks').update(updates).eq('id', id).eq('user_id', session.user.id);
   };
 
   const deleteTask = async (id: string) => {
     setTasks(prev => prev.filter(t => t.id !== id));
-    const { error } = await supabase.from('tasks').delete().eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao excluir tarefa:", error);
+    await supabase.from('tasks').delete().eq('id', id).eq('user_id', session.user.id);
   };
 
-  // --- Operações Financeiras ---
   const addTransaction = async (tx: Transaction) => {
     setTransactions(prev => [tx, ...prev]);
-    const { error } = await supabase.from('transactions').insert([{ ...tx, user_id: session.user.id }]);
-    if (error) console.error("Erro ao salvar transação:", error);
+    await supabase.from('transactions').insert([{ ...tx, user_id: session.user.id }]);
   };
 
   const updateTransaction = async (id: string, updates: Partial<Transaction>) => {
     setTransactions(prev => prev.map(tx => tx.id === id ? { ...tx, ...updates } : tx));
-    const { error } = await supabase.from('transactions').update(updates).eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao atualizar transação:", error);
+    await supabase.from('transactions').update(updates).eq('id', id).eq('user_id', session.user.id);
   };
 
   const deleteTransaction = async (id: string) => {
     setTransactions(prev => prev.filter(tx => tx.id !== id));
-    const { error } = await supabase.from('transactions').delete().eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao excluir transação:", error);
+    await supabase.from('transactions').delete().eq('id', id).eq('user_id', session.user.id);
   };
 
-  // --- Operações de Convidados ---
   const addGuest = async (guest: Guest) => {
     setGuests(prev => [guest, ...prev]);
-    const { error } = await supabase.from('guests').insert([{
+    await supabase.from('guests').insert([{
       id: guest.id, 
       name: guest.name, 
       group_name: guest.group, 
@@ -163,7 +154,6 @@ const App: React.FC = () => {
       phone: guest.phone, 
       user_id: session.user.id
     }]);
-    if (error) console.error("Erro ao salvar convidado:", error);
   };
 
   const updateGuest = async (id: string, updates: Partial<Guest>) => {
@@ -174,59 +164,47 @@ const App: React.FC = () => {
     if (updates.plusOnes !== undefined) dbUpdates.plus_ones = updates.plusOnes;
     if (updates.rsvpStatus) dbUpdates.rsvp_status = updates.rsvpStatus;
     if (updates.phone) dbUpdates.phone = updates.phone;
-
-    const { error } = await supabase.from('guests').update(dbUpdates).eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao atualizar convidado:", error);
+    await supabase.from('guests').update(dbUpdates).eq('id', id).eq('user_id', session.user.id);
   };
 
   const deleteGuest = async (id: string) => {
     setGuests(prev => prev.filter(g => g.id !== id));
-    const { error } = await supabase.from('guests').delete().eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao excluir convidado:", error);
+    await supabase.from('guests').delete().eq('id', id).eq('user_id', session.user.id);
   };
 
-  // --- Operações de Padrinhos ---
   const addGodparent = async (gp: Godparent) => {
     setGodparents(prev => [gp, ...prev]);
-    const { error } = await supabase.from('godparents').insert([{ ...gp, user_id: session.user.id }]);
-    if (error) console.error("Erro ao salvar padrinho:", error);
+    await supabase.from('godparents').insert([{ ...gp, user_id: session.user.id }]);
   };
 
   const updateGodparent = async (id: string, updates: Partial<Godparent>) => {
     setGodparents(prev => prev.map(gp => gp.id === id ? { ...gp, ...updates } : gp));
-    const { error } = await supabase.from('godparents').update(updates).eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao atualizar padrinho:", error);
+    await supabase.from('godparents').update(updates).eq('id', id).eq('user_id', session.user.id);
   };
 
   const deleteGodparent = async (id: string) => {
     setGodparents(prev => prev.filter(gp => gp.id !== id));
-    const { error } = await supabase.from('godparents').delete().eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao excluir padrinho:", error);
+    await supabase.from('godparents').delete().eq('id', id).eq('user_id', session.user.id);
   };
 
-  // --- Operações de Presentes ---
   const addGift = async (gift: Gift) => {
     setGifts(prev => [gift, ...prev]);
-    const { error } = await supabase.from('gifts').insert([{ ...gift, user_id: session.user.id }]);
-    if (error) console.error("Erro ao salvar presente:", error);
+    await supabase.from('gifts').insert([{ ...gift, user_id: session.user.id }]);
   };
 
   const updateGift = async (id: string, updates: Partial<Gift>) => {
     setGifts(prev => prev.map(g => g.id === id ? { ...g, ...updates } : g));
-    const { error } = await supabase.from('gifts').update(updates).eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao atualizar presente:", error);
+    await supabase.from('gifts').update(updates).eq('id', id).eq('user_id', session.user.id);
   };
 
   const deleteGift = async (id: string) => {
     setGifts(prev => prev.filter(g => g.id !== id));
-    const { error } = await supabase.from('gifts').delete().eq('id', id).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao excluir presente:", error);
+    await supabase.from('gifts').delete().eq('id', id).eq('user_id', session.user.id);
   };
 
-  // --- Operações do Casamento (Configurações) ---
   const updateWedding = async (updates: Partial<WeddingData>) => {
     setWedding(prev => prev ? { ...prev, ...updates } : null);
-    const { error } = await supabase.from('wedding').update({
+    await supabase.from('wedding').update({
       name: updates.name,
       date: updates.date,
       budget: updates.budget,
@@ -234,7 +212,6 @@ const App: React.FC = () => {
       style: updates.style,
       city: updates.city
     }).eq('user_id', session.user.id);
-    if (error) console.error("Erro ao atualizar casamento:", error);
   };
 
   const logout = async () => {
