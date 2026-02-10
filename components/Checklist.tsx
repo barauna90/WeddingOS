@@ -109,9 +109,8 @@ export const Checklist: React.FC<ChecklistProps> = ({ tasks, wedding, onAddTask,
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         <div className="xl:col-span-3 space-y-6">
-          {/* Filtros Corrigidos */}
           <div className="flex items-center space-x-4">
-            <div className="p-3 bg-white border border-slate-100 text-slate-400 rounded-2xl shadow-sm">
+            <div className="p-3 bg-slate-100 text-slate-500 rounded-2xl">
               <ListFilter size={18} />
             </div>
             <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
@@ -119,10 +118,10 @@ export const Checklist: React.FC<ChecklistProps> = ({ tasks, wedding, onAddTask,
                 <button 
                   key={tab} 
                   onClick={() => setActiveFilter(tab as any)}
-                  className={`px-4 py-2 text-xs font-bold rounded-full border transition-all whitespace-nowrap ${
+                  className={`px-5 py-2.5 text-xs font-bold rounded-full border transition-all whitespace-nowrap shadow-sm ${
                     activeFilter === tab 
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
-                      : 'bg-white text-slate-600 border-slate-200 hover:border-pink-200 hover:text-pink-600'
+                      ? 'bg-slate-900 text-white border-slate-900' 
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-pink-300 hover:text-pink-600'
                   }`}
                 >
                   {tab}
@@ -139,9 +138,6 @@ export const Checklist: React.FC<ChecklistProps> = ({ tasks, wedding, onAddTask,
                 </div>
                 <h3 className="text-lg font-bold text-slate-800">Nenhuma tarefa encontrada</h3>
                 <p className="text-slate-400 max-w-sm mt-1 text-sm font-medium">Experimente mudar o filtro ou use a IA para gerar novas tarefas.</p>
-                {tasks.length === 0 && (
-                  <button onClick={handleGenerateAI} className="mt-6 px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest shadow-xl">Começar Planejamento</button>
-                )}
               </div>
             )}
             
@@ -152,7 +148,7 @@ export const Checklist: React.FC<ChecklistProps> = ({ tasks, wedding, onAddTask,
                     onClick={() => onUpdateTask(task.id, { status: task.status === TaskStatus.CONCLUIDA ? TaskStatus.PENDENTE : TaskStatus.CONCLUIDA })}
                     className={`mt-1 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${
                       task.status === TaskStatus.CONCLUIDA 
-                      ? 'bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-200' 
+                      ? 'bg-pink-500 border-pink-500 text-white' 
                       : 'border-slate-200 group-hover:border-pink-400 bg-slate-50'
                     }`}
                   >
@@ -208,7 +204,6 @@ export const Checklist: React.FC<ChecklistProps> = ({ tasks, wedding, onAddTask,
                 {isLoadingRecs ? <Loader2 className="animate-spin" size={18} /> : <span>Gerar Insights</span>}
               </button>
             </div>
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl"></div>
           </div>
 
           {recommendations && (

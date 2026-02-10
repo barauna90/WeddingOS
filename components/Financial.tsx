@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Transaction, WeddingData } from '../types';
-import { Plus, Download, Filter, ArrowUpCircle, Wallet, X, Loader2, Edit2, Trash2, CheckCircle2, AlertTriangle, ListFilter } from 'lucide-react';
+import { Plus, Download, Filter, ArrowUpCircle, Wallet, X, Loader2, Edit2, Trash2, CheckCircle2, AlertTriangle, ListFilter, Printer } from 'lucide-react';
 
 interface FinancialProps {
   transactions: Transaction[];
@@ -38,15 +38,13 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
     .filter(t => t.type === 'despesa' && t.status === 'pago')
     .reduce((acc, t) => acc + Number(t.value), 0);
 
-  // Comprometido: Soma o que ainda não foi pago (Pendente ou Atrasado)
   const committedTotal = transactions
     .filter(t => t.type === 'despesa' && t.status !== 'pago')
     .reduce((acc, t) => acc + Number(t.value), 0);
 
-  // Saldo Livre = Orçamento - (Já Gasto + O que pretendo gastar/já contratado)
+  // Saldo Livre = Budget Total - (Tudo que já foi lançado: Pago ou Pendente)
   const availableBalance = Math.max(0, wedding.budget - (paidTotal + committedTotal));
 
-  // Filtro e Ordenação
   const filteredTransactions = useMemo(() => {
     let result = transactions;
     if (statusFilter !== 'todos') {
@@ -54,6 +52,74 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
     }
     return [...result].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [transactions, statusFilter]);
+
+  const handlePrintReport = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const html = `
+      <html>
+        <head>
+          <title>Relatório Financeiro - ${wedding.name}</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; color: #333; }
+            h1 { font-family: serif; color: #e11d48; margin-bottom: 5px; }
+            .header { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+            .summary { display: grid; grid-template-cols: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+            .card { padding: 15px; border: 1px solid #eee; border-radius: 10px; }
+            .card label { font-size: 10px; text-transform: uppercase; font-weight: bold; color: #999; }
+            .card value { display: block; font-size: 18px; font-weight: bold; margin-top: 5px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { text-align: left; background: #f9fafb; padding: 12px; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #eee; }
+            td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+            .status { font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: bold; text-transform: uppercase; }
+            .status-pago { background: #dcfce7; color: #166534; }
+            .status-pendente { background: #fef3c7; color: #92400e; }
+            .status-atrasado { background: #fee2e2; color: #991b1b; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Relatório Financeiro WeddingOS</h1>
+            <p>${wedding.name} • Data do Casamento: ${new Date(wedding.date).toLocaleDateString()}</p>
+          </div>
+          <div class="summary">
+            <div class="card"><label>Orçamento Total</label><value>R$ ${wedding.budget.toLocaleString()}</value></div>
+            <div class="card"><label>Já Pago</label><value>R$ ${paidTotal.toLocaleString()}</value></div>
+            <div class="card"><label>Comprometido</label><value>R$ ${committedTotal.toLocaleString()}</value></div>
+            <div class="card"><label>Saldo Disponível</label><value>R$ ${availableBalance.toLocaleString()}</value></div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredTransactions.map(t => `
+                <tr>
+                  <td>${new Date(t.date).toLocaleDateString()}</td>
+                  <td><strong>${t.description}</strong></td>
+                  <td>${t.category}</td>
+                  <td>R$ ${Number(t.value).toLocaleString()}</td>
+                  <td><span class="status status-${t.status}">${t.status}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <p style="margin-top: 40px; font-size: 10px; color: #aaa; text-align: center;">Documento gerado em ${new Date().toLocaleString()}</p>
+          <script>window.print();</script>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
 
   const handleOpenAddModal = () => {
     setEditingId(null);
@@ -113,9 +179,12 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
           <p className="text-slate-500">Gestão orçamentária e fluxo de caixa.</p>
         </div>
         <div className="flex space-x-3">
-          <button className="flex items-center space-x-2 px-5 py-3 bg-white text-slate-600 border rounded-2xl hover:bg-slate-50 transition-all font-bold text-sm shadow-sm">
-            <Download size={18} />
-            <span>Relatórios</span>
+          <button 
+            onClick={handlePrintReport}
+            className="flex items-center space-x-2 px-5 py-3 bg-white text-slate-700 border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all font-bold text-sm shadow-sm"
+          >
+            <Printer size={18} />
+            <span>Imprimir PDF</span>
           </button>
           <button 
             onClick={handleOpenAddModal}
@@ -127,7 +196,6 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
         </div>
       </div>
 
-      {/* Indicadores */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-slate-900 text-white p-6 rounded-[2rem] relative overflow-hidden shadow-xl">
           <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Budget Total</p>
@@ -153,7 +221,6 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
             <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Comprometido</p>
           </div>
           <p className="text-2xl font-bold text-amber-600">R$ {committedTotal.toLocaleString()}</p>
-          <p className="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tight">* Em aberto / Dívida</p>
         </div>
 
         <div className="bg-pink-50 p-6 rounded-[2rem] border border-pink-100 shadow-sm">
@@ -167,11 +234,10 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
         </div>
       </div>
 
-      {/* Lista de Lançamentos com Filtros */}
       <div className="bg-white rounded-[2.5rem] border shadow-sm overflow-hidden">
         <div className="p-8 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-center space-x-4">
-            <div className="p-3 bg-slate-50 text-slate-400 rounded-2xl">
+            <div className="p-3 bg-slate-100 text-slate-500 rounded-2xl shadow-sm">
               <ListFilter size={20} />
             </div>
             <div className="flex flex-wrap gap-2">
@@ -184,19 +250,16 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
                 <button
                   key={filter.id}
                   onClick={() => setStatusFilter(filter.id as any)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                  className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all border shadow-sm ${
                     statusFilter === filter.id 
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-lg' 
-                      : 'bg-white text-slate-400 border-slate-100 hover:border-pink-200 hover:text-pink-600 shadow-sm'
+                      ? 'bg-slate-900 text-white border-slate-900' 
+                      : 'bg-white text-slate-700 border-slate-200 hover:border-pink-300 hover:text-pink-600'
                   }`}
                 >
                   {filter.label}
                 </button>
               ))}
             </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Exibindo {filteredTransactions.length} lançamentos</span>
           </div>
         </div>
 
@@ -249,11 +312,6 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
                   </td>
                 </tr>
               ))}
-              {filteredTransactions.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="px-8 py-20 text-center text-slate-400 font-medium italic">Nenhum lançamento encontrado para este filtro.</td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
@@ -332,16 +390,13 @@ export const Financial: React.FC<FinancialProps> = ({ transactions, wedding, onA
                   </select>
                 </div>
               </div>
-              
-              <div className="flex gap-4 mt-6">
-                <button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl flex items-center justify-center space-x-2"
-                >
-                  {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : (editingId ? 'Salvar' : 'Cadastrar')}
-                </button>
-              </div>
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl flex items-center justify-center space-x-2 mt-4"
+              >
+                {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : (editingId ? 'Salvar' : 'Cadastrar')}
+              </button>
             </form>
           </div>
         </div>
