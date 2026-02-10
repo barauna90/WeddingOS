@@ -14,22 +14,22 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ wedding, tasks, transactions, guests }) => {
   const paidTotal = transactions
     .filter(t => t.type === 'despesa' && t.status === 'pago')
-    .reduce((acc, t) => acc + t.value, 0);
+    .reduce((acc, t) => acc + Number(t.value), 0);
 
-  // Comprometido = Total de despesas contratadas (Pago + Pendente + Atrasado)
   const committedTotal = transactions
-    .filter(t => t.type === 'despesa')
-    .reduce((acc, t) => acc + t.value, 0);
+    .filter(t => t.type === 'despesa' && t.status !== 'pago')
+    .reduce((acc, t) => acc + Number(t.value), 0);
 
-  const availableBalance = Math.max(0, wedding.budget - committedTotal);
+  // Disponível = Orçamento Total - (Tudo que já foi contratado/lançado como gasto)
+  const availableBalance = Math.max(0, wedding.budget - (paidTotal + committedTotal));
 
   const completedTasks = tasks.filter(t => t.status === TaskStatus.CONCLUIDA).length;
   const daysRemaining = Math.ceil((new Date(wedding.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
   const chartData = [
     { name: 'Pagos', value: paidTotal, fill: '#10b981' }, 
-    { name: 'Comprometido', value: committedTotal, fill: '#f59e0b' },
-    { name: 'Disponível', value: availableBalance, fill: '#f472b6' },
+    { name: 'Dívida', value: committedTotal, fill: '#f59e0b' },
+    { name: 'Livre', value: availableBalance, fill: '#f472b6' },
   ];
 
   return (
@@ -49,7 +49,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ wedding, tasks, transactio
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-sm relative overflow-hidden">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest relative z-10">Budget Total</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest relative z-10">Orçamento</p>
           <p className="text-2xl font-bold mt-1 relative z-10">R$ {wedding.budget.toLocaleString()}</p>
           <DollarSign className="absolute -right-2 -bottom-2 text-slate-800 opacity-50" size={80} />
         </div>
@@ -60,7 +60,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ wedding, tasks, transactio
               <TrendingUp size={24} />
             </div>
           </div>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Pago</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Já Pagos</p>
           <p className="text-2xl font-bold text-slate-900 mt-1">R$ {paidTotal.toLocaleString()}</p>
         </div>
 
@@ -88,7 +88,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ wedding, tasks, transactio
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border shadow-sm flex flex-col">
           <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center font-serif italic">
-            Saúde Financeira do Projeto
+            Visão Geral do Orçamento
           </h3>
           <div className="flex-1 min-h-[300px] w-full" style={{ position: 'relative' }}>
             <ResponsiveContainer width="99%" height={300}>

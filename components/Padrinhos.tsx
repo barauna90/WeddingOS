@@ -25,7 +25,7 @@ export const Padrinhos: React.FC<PadrinhosProps> = ({ godparents, onAdd, onUpdat
     e.preventDefault();
     setIsSubmitting(true);
     const item: Godparent = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(), // Usando UUID real
       ...newGodparent
     };
     await onAdd(item);

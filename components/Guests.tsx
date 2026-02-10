@@ -27,7 +27,7 @@ export const Guests: React.FC<GuestsProps> = ({ guests, onAddGuest, onUpdateGues
     e.preventDefault();
     setIsSubmitting(true);
     const guest: Guest = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(), // Usando UUID real
       ...newGuest
     };
     await onAddGuest(guest);
