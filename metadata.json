@@ -1,0 +1,7 @@
+{
+  "name": "WeddingOS - Premium Wedding Organizer",
+  "description": "A comprehensive wedding planning system with AI-driven checklists, financial tracking, guest management, and RSVP control.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
