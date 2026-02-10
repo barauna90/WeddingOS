@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Guest, RSVPStatus } from '../types';
+import { Guest, RSVPStatus } from '../types.ts';
 import { Plus, Search, Users, Phone, CheckCircle2, Trash2, X, Loader2 } from 'lucide-react';
 
 interface GuestsProps {

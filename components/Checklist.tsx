@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
-import { Task, Priority, TaskStatus, WeddingData } from '../types';
-import { generateInitialChecklist, getSmartRecommendations } from '../services/geminiService';
+import { Task, Priority, TaskStatus, WeddingData } from '../types.ts';
+import { generateInitialChecklist, getSmartRecommendations } from '../services/geminiService.ts';
 import { 
   Plus, 
   Sparkles, 

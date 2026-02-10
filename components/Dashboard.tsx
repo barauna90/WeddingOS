@@ -2,7 +2,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { DollarSign, CheckCircle, Clock, TrendingUp, AlertTriangle } from 'lucide-react';
-import { WeddingData, Task, Transaction, TaskStatus } from '../types';
+import { WeddingData, Task, Transaction, TaskStatus } from '../types.ts';
 
 interface DashboardProps {
   wedding: WeddingData;

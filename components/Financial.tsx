@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Transaction, WeddingData } from '../types';
+import { Transaction, WeddingData } from '../types.ts';
 import { Plus, Download, Filter, ArrowUpCircle, Wallet, X, Loader2, Edit2, Trash2, CheckCircle2, AlertTriangle, ListFilter, Printer } from 'lucide-react';
 
 interface FinancialProps {

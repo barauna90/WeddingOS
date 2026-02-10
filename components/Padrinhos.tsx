@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Godparent, GodparentRole } from '../types';
+import { Godparent, GodparentRole } from '../types.ts';
 import { Plus, Users, Phone, MessageSquare, CheckCircle2, X, Trash2, Loader2, Star } from 'lucide-react';
 
 interface PadrinhosProps {

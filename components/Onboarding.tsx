@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { supabase } from '../services/supabase';
+import { supabase } from '../services/supabase.ts';
 import { Heart, Calendar, DollarSign, MapPin, Sparkles, Loader2, ArrowRight } from 'lucide-react';
-import { WeddingData } from '../types';
+import { WeddingData } from '../types.ts';
 
 interface OnboardingProps {
   userId: string;

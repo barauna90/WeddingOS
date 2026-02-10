@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { WeddingData } from '../types';
+import { WeddingData } from '../types.ts';
 import { Settings, User, Bell, Shield, Palette, Save, Loader2, Calendar, MapPin, DollarSign, LogOut } from 'lucide-react';
 
 interface SettingsProps {

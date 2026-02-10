@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { NAV_ITEMS } from '../constants';
+import { NAV_ITEMS } from '../constants.tsx';
 import { Menu, X, Bell, Search, User, LogOut } from 'lucide-react';
 
 interface LayoutProps {

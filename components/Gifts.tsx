@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Gift, GiftStatus } from '../types';
+import { Gift, GiftStatus } from '../types.ts';
 import { Plus, Gift as GiftIcon, Search, Filter, X, Loader2, CheckCircle, Package, ExternalLink, MessageSquareQuote } from 'lucide-react';
 
 interface GiftsProps {
@@ -222,7 +222,6 @@ export const Gifts: React.FC<GiftsProps> = ({ gifts, onAdd, onUpdate, onDelete }
                     <button 
                       key={type}
                       type="button"
-                      // Fix: type is one of "casamento" | "cha_de_panela" | "custom", matching the explicit union type in newGift state
                       onClick={() => setNewGift({...newGift, listType: type})}
                       className={`py-2 rounded-xl text-[10px] font-black uppercase transition-all border ${
                         newGift.listType === type ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-400 border-slate-100'
